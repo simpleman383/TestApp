@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Payture Test App</string>
+    <string name="app_switch_title">Turn On/Off</string>
+    <string name="url_hint">http://someaddress.com</string>
+</resources>
