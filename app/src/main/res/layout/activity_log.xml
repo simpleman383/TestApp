@@ -33,6 +33,19 @@
         android:id="@+id/clear_button"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/scrollToEndButton"
+        android:layout_toLeftOf="@+id/scrollToEndButton" />
+
+    <ToggleButton
+        android:text="Scroll"
+        android:layout_width="50dp"
+        android:layout_height="55dp"
+        android:layout_below="@+id/scrollView"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/scroll_toggle_selector"
+        android:textOff=""
+        android:textOn=""
+        android:id="@+id/scrollToEndButton" />
+
 </RelativeLayout>

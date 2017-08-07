@@ -5,13 +5,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.util.logging.Logger;
 
 public class LogActivity extends AppCompatActivity {
+
+    private boolean scrollToEnd = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,15 +40,21 @@ public class LogActivity extends AppCompatActivity {
             }
         });
 
+        ToggleButton scrollToEndButton = (ToggleButton)findViewById(R.id.scrollToEndButton);
+        scrollToEndButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                scrollToEnd = isChecked;
+            }
+        });
+
         TextView logWindow = (TextView)findViewById(R.id.log_window);
         logWindow.setText("");
         logWindow.setText(data);
-        ScrollView scrollView = (ScrollView)findViewById(R.id.scrollView);
-        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
     }
 
     private Thread autoUpdateInit(){
-        final int SLEEP_INTERVAL = 400;
+        final int SLEEP_INTERVAL = 200;
         Thread autoUpdate = new Thread(){
             @Override
             public void run() {
@@ -59,8 +69,10 @@ public class LogActivity extends AppCompatActivity {
                                 logWindow.setText("");
                                 logWindow.setText(data);
 
-                                ScrollView scrollView = (ScrollView)findViewById(R.id.scrollView);
-                                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                                if (scrollToEnd) {
+                                    ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView);
+                                    scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                                }
                             }
                         });
                     }
