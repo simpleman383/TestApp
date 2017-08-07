@@ -24,8 +24,8 @@ public class MessageInfo {
         return MessageTime;
     }
 
-    public long getId() {
-        return Id;
+    public String getId() {
+        return String.valueOf(Id);
     }
 
     public MessageInfo(Bundle bundle) {
@@ -53,5 +53,4 @@ public class MessageInfo {
         String formattedTime = df.format("EEE, d MMM yyyy HH:mm:ss", timestamp).toString();
         return formattedTime;
     }
-
 }
