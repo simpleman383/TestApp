@@ -33,6 +33,7 @@
         </receiver>
 
         <service android:name=".SMSMessageService" />
+        <service android:name=".EmptyService" />
 
         <activity android:name=".LogActivity" android:screenOrientation="portrait"></activity>
     </application>

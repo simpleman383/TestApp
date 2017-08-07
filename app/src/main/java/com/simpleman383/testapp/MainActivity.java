@@ -37,10 +37,38 @@ public class MainActivity extends AppCompatActivity {
                         Manifest.permission.READ_SMS,
                         Manifest.permission.INTERNET }, 10);
 
-        //File file = new File(getFilesDir(), "SMSLog");
         SMSLogger.createLogger();
         initializeControls();
-        initTest();
+        initLog();
+        loadLastURL();
+        startService(new Intent(this, EmptyService.class)); // пустой сервис, чтобы поддерживать приложение в списке Running
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putCharSequence("URL", ((EditText)findViewById(R.id.editText)).getText().toString());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String url = savedInstanceState.getString("URL");
+        ((EditText)findViewById(R.id.editText)).setText(url);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PackageManager pm  = MainActivity.this.getPackageManager();
+        ComponentName componentName = new ComponentName(MainActivity.this, SMSMonitor.class);
+        pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
+        stopService(new Intent(this, EmptyService.class));
+    }
+
+    private void loadLastURL(){
+        String url = DataSaver.getInstance().getLastURL(getApplicationContext());
+        ((EditText)findViewById(R.id.editText)).setText(url);
     }
 
     private void initializeControls(){
@@ -55,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
                 int enabled = isChecked ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
                         PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
                 pm.setComponentEnabledSetting(componentName,enabled,PackageManager.DONT_KILL_APP);
+                if (isChecked)
+                    DataSaver.getInstance().SaveURL(getApplicationContext(), ((EditText)findViewById(R.id.editText)).getText().toString());
             }
         });
 
@@ -73,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String text = s.toString();
                 try {
-                    String url_pattern = "^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+                    String url_pattern = "^(?i)(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
                     Pattern pattern = Pattern.compile(url_pattern);
                     Matcher matcher = pattern.matcher(text);
                     isURLValid = matcher.matches();
@@ -95,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initTest(){
+    private void initLog(){
         ImageButton btn = (ImageButton)findViewById(R.id.log_button);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override

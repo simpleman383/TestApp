@@ -12,10 +12,10 @@ import java.io.InputStreamReader;
 public class SMSLogger {
 
     private static SMSLogger logger;
-    private final static String logName = "SMSLog";
+    private final static String LOG_NAME = "SMSLog";
 
     public String getLoggerName(){
-        return this.logName;
+        return this.LOG_NAME;
     }
 
     private SMSLogger(){
@@ -30,7 +30,7 @@ public class SMSLogger {
 
     public void addRecord(Context ctx, String info) {
         try {
-            FileOutputStream fileOutputStream = ctx.openFileOutput(logName, Context.MODE_APPEND);
+            FileOutputStream fileOutputStream = ctx.openFileOutput(LOG_NAME, Context.MODE_APPEND);
             fileOutputStream.write((getCurrentTime() + " : " + info + "\n\n").getBytes());
             fileOutputStream.close();
         } catch (Exception ex) {
@@ -46,7 +46,7 @@ public class SMSLogger {
 
     public void clearLogger(Context ctx) {
         try {
-            FileOutputStream fileOutputStream = ctx.openFileOutput(logName, Context.MODE_PRIVATE);
+            FileOutputStream fileOutputStream = ctx.openFileOutput(LOG_NAME, Context.MODE_PRIVATE);
             fileOutputStream.write("".getBytes());
             fileOutputStream.close();
         } catch (Exception ex) {}
@@ -54,7 +54,7 @@ public class SMSLogger {
 
     public String readAll(Context context){
         try {
-            InputStream inputStream = context.openFileInput(logName);
+            InputStream inputStream = context.openFileInput(LOG_NAME);
             String data = "";
 
             if (inputStream != null) {
