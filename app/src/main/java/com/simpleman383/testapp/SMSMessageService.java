@@ -42,7 +42,7 @@ public class SMSMessageService extends IntentService {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         final String urlInput = preferences.getString("ForwardTo", "");
 
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+        RequestQueue queue = QueueController.getInstance(getApplicationContext()).getAppRequestQueue();
         StringRequest request = new StringRequest(Request.Method.POST, urlInput, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
