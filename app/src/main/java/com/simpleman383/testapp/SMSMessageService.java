@@ -46,12 +46,14 @@ public class SMSMessageService extends IntentService {
         StringRequest request = new StringRequest(Request.Method.POST, urlInput, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                SMSLogger.createLogger().addRecord(getApplicationContext(), "Successful Request to " + urlInput + " : " + mInfo.getRawParams());
+                SMSLogger.createLogger().addRecord(getApplicationContext(), "Successful Request to " + urlInput + " : " +
+                        mInfo.getRawParams() + " Response : " + response);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                SMSLogger.createLogger().addRecord(getApplicationContext(), "Failed Request to " + urlInput + " : " + mInfo.getRawParams());
+                SMSLogger.createLogger().addRecord(getApplicationContext(), "Failed Request to " + urlInput + " : " +
+                        mInfo.getRawParams() + " Error : " + error.toString());
             }
         }) {
             @Override

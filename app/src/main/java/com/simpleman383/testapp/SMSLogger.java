@@ -5,6 +5,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,10 +14,7 @@ public class SMSLogger {
 
     private static SMSLogger logger;
     private final static String LOG_NAME = "SMSLog";
-
-    public String getLoggerName(){
-        return this.LOG_NAME;
-    }
+    private final static long LOG_MAX_SIZE = 4096;
 
     private SMSLogger(){
     }
@@ -30,6 +28,10 @@ public class SMSLogger {
 
     public void addRecord(Context ctx, String info) {
         try {
+            File file = new File(ctx.getFilesDir(), LOG_NAME);
+            if (file.length() > LOG_MAX_SIZE)
+                this.clearLogger(ctx);
+
             FileOutputStream fileOutputStream = ctx.openFileOutput(LOG_NAME, Context.MODE_APPEND);
             fileOutputStream.write((getCurrentTime() + " : " + info + "\n\n").getBytes());
             fileOutputStream.close();

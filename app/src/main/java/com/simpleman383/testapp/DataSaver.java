@@ -12,9 +12,26 @@ import java.io.InputStreamReader;
  * Created by simpl on 07.08.2017.
  */
 
+
 public class DataSaver {
     private static DataSaver dataSaver;
     private final static String URL_MEMO = "Url_Memo";
+    private final static String SWITCH_MEMO = "Switch_Memo";
+
+    public enum STATE {
+        URL(URL_MEMO), SWITCH(SWITCH_MEMO);
+
+        private String filename;
+
+        STATE(String filename){
+            this.filename = filename;
+        }
+
+        public String getFilename(){
+            return filename;
+        }
+    }
+
 
     private DataSaver(){}
 
@@ -25,9 +42,9 @@ public class DataSaver {
         return dataSaver;
     }
 
-    public void SaveURL(Context context, String info){
+    public void SaveState(Context context, String info, STATE state){
         try {
-            FileOutputStream fileOutputStream = context.openFileOutput(URL_MEMO, Context.MODE_PRIVATE);
+            FileOutputStream fileOutputStream = context.openFileOutput(state.getFilename(), Context.MODE_PRIVATE);
             fileOutputStream.write((info).getBytes());
             fileOutputStream.close();
         } catch (Exception ex) {
@@ -36,9 +53,9 @@ public class DataSaver {
     }
 
 
-    public String getLastURL(Context context) {
+    public String getLastState(Context context, STATE state) {
         try {
-            InputStream inputStream = context.openFileInput(URL_MEMO);
+            InputStream inputStream = context.openFileInput(state.getFilename());
             String data = "";
 
             if (inputStream != null) {

@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         SMSLogger.createLogger();
         initializeControls();
         initLog();
-        loadLastURL();
+        loadLastState();
         startService(new Intent(this, EmptyService.class)); // пустой сервис, чтобы поддерживать приложение в списке Running
     }
 
@@ -60,15 +60,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        saveLastState();
         PackageManager pm  = MainActivity.this.getPackageManager();
         ComponentName componentName = new ComponentName(MainActivity.this, SMSMonitor.class);
-        pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
+        pm.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
         stopService(new Intent(this, EmptyService.class));
     }
 
-    private void loadLastURL(){
-        String url = DataSaver.getInstance().getLastURL(getApplicationContext());
+    private void loadLastState(){
+        String url = DataSaver.getInstance().getLastState(getApplicationContext(), DataSaver.STATE.URL);
+        Boolean enabled = Boolean.parseBoolean(DataSaver.getInstance().getLastState(getApplicationContext(), DataSaver.STATE.SWITCH));
         ((EditText)findViewById(R.id.editText)).setText(url);
+        ((ToggleButton)findViewById(R.id.toggleButton)).setChecked(enabled);
+        isURLValid = enabled;
+    }
+
+    private void saveLastState(){
+        DataSaver.getInstance().SaveState(getApplicationContext(), ((EditText)findViewById(R.id.editText)).getText().toString(), DataSaver.STATE.URL);
+        DataSaver.getInstance().SaveState(getApplicationContext(), String.valueOf(((ToggleButton)findViewById(R.id.toggleButton)).isChecked()), DataSaver.STATE.SWITCH);
     }
 
     private void initializeControls(){
@@ -83,8 +92,6 @@ public class MainActivity extends AppCompatActivity {
                 int enabled = isChecked ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
                         PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
                 pm.setComponentEnabledSetting(componentName,enabled,PackageManager.DONT_KILL_APP);
-                if (isChecked)
-                    DataSaver.getInstance().SaveURL(getApplicationContext(), ((EditText)findViewById(R.id.editText)).getText().toString());
             }
         });
 
@@ -136,20 +143,4 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
-    /* Для тестирования запросов
-    private void initTest(){
-        Button btn = (Button)findViewById(R.id.button);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent serviceIntent = new Intent(getApplicationContext(), SMSMessageService.class);
-                serviceIntent.putExtra("Message_From", "123");
-                serviceIntent.putExtra("Message_Timestamp", "123456123345");
-                serviceIntent.putExtra("Message_Body", "hello world");
-                startService(serviceIntent);
-            }
-        });
-    }*/
-
 }
